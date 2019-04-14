@@ -34,6 +34,14 @@ public abstract class Client implements Closeable {
 		return mqttConnectOptions;
 	}
 
+	public void publish(String topic, String payload) {
+		try {
+			client.publish(topic, payload.getBytes(), 0, false);
+		} catch (MqttException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private void subsribe(String topic, Consumer<Message> consumer) {
 		try {
 			client.subscribe(topic, (t, m) -> consumer.accept(new Message(t, new String(m.getPayload()))));

@@ -1,9 +1,7 @@
 package sft.reader.log;
 
-import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.pow;
-import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -20,66 +18,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import sft.event.BallPosition;
 import sft.event.Event;
-import sft.event.TeamScored;
+import sft.reader.log.parser.LogEntryParsers;
 
 public class LogReader {
-
-	private static interface LogEntryParser {
-		boolean canParse(String topic);
-
-		Event parse(long nanos, String topic, String message);
-	}
-
-	private static class GameScoreTeamParser implements LogReader.LogEntryParser {
-
-		@Override
-		public boolean canParse(String topic) {
-			return topic.startsWith("game/score/team/");
-		}
-
-		@Override
-		public Event parse(long nanos, String topic, String message) {
-			int team = parseInt(topic.substring("game/score/team/".length()));
-			int score = parseInt(message);
-			return new TeamScored(nanos, team, score);
-		}
-
-	}
-
-	private static class BallPositionParser implements LogReader.LogEntryParser {
-
-		private static final Pattern xPattern = doubleValueFromJsonPattern("x");
-		private static final Pattern yPattern = doubleValueFromJsonPattern("y");
-
-		@Override
-		public boolean canParse(String topic) {
-			return topic.equals("ball/position");
-		}
-
-		@Override
-		public Event parse(long nanos, String topic, String message) {
-			Matcher xMatcher = xPattern.matcher(message);
-			Matcher yMatcher = yPattern.matcher(message);
-			if (!xMatcher.find() || !yMatcher.find()) {
-				throw new IllegalStateException("Cannot parse " + message + " as position");
-			}
-			return new BallPosition(nanos, parseDouble(xMatcher.group(1)), parseDouble(yMatcher.group(1)));
-		}
-
-	}
-
-	private static Pattern doubleValueFromJsonPattern(String var) {
-		return compile("\"" + var + "\":([\\d\\.]+)[,}]");
-	}
 
 	private static final int nanoDigitsUsed = 6;
 	private static final int nanoMultiplier = (int) pow(10,
 			String.valueOf(SECONDS.toNanos(1) - 1).length() - nanoDigitsUsed);
 	private static final Pattern timestampPattern = compile("(\\d{2}):(\\d{2}):(\\d{2}).(\\d{" + nanoDigitsUsed + "})");
-	private static final List<LogReader.LogEntryParser> parsers = asList(new BallPositionParser(),
-			new GameScoreTeamParser());
 
 	public static List<Event> read(InputStream is) throws IOException, ParseException {
 		return read(new InputStreamReader(is));
@@ -101,8 +48,7 @@ public class LogReader {
 		long nanos = nanos(timestampMatcher);
 		String topic = split[1].trim();
 		String message = split[2].trim();
-		return parsers.stream().filter(p -> p.canParse(topic)).findFirst().map(p -> p.parse(nanos, topic, message))
-				.orElse(Event.NULL);
+		return LogEntryParsers.tryParse(nanos, topic, message).orElse(Event.NULL);
 	}
 
 	private static long nanos(Matcher timestampMatcher) {
