@@ -1,4 +1,4 @@
-package sft.ui;
+package sft.ui.panel;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -7,12 +7,12 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-final class BackgroundPanel extends JPanel {
+public final class BackgroundPanel extends JPanel {
 
 	private final BufferedImage img;
 	private static final long serialVersionUID = 5889168701206425622L;
 
-	BackgroundPanel(BufferedImage img) throws HeadlessException {
+	public BackgroundPanel(BufferedImage img) throws HeadlessException {
 		this.img = img;
 		Dimension dim = new Dimension(img.getWidth(), img.getHeight());
 		setSize(dim);

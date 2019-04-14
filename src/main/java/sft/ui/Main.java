@@ -19,6 +19,9 @@ import javax.swing.OverlayLayout;
 
 import sft.event.BallPosition;
 import sft.event.TeamScored;
+import sft.ui.panel.BackgroundPanel;
+import sft.ui.panel.DataPanel;
+import sft.ui.panel.LogFilePanel;
 
 public class Main {
 

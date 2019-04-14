@@ -1,4 +1,4 @@
-package sft.ui;
+package sft.ui.panel;
 
 import static java.awt.Color.BLACK;
 import static java.awt.Font.PLAIN;
@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import sft.event.BallPosition;
 import sft.event.TeamScored;
 
-final class DataPanel extends JPanel {
+public final class DataPanel extends JPanel {
 
 	private static final long serialVersionUID = 5889168701206425622L;
 
@@ -22,7 +22,7 @@ final class DataPanel extends JPanel {
 	private final Color ballColor;
 	private final Font font = new Font("TimesRoman", PLAIN, 60);
 
-	private Map<Integer, Integer> scores = new HashMap<>();
+	private final Map<Integer, Integer> scores = new HashMap<>();
 	private int posX = -1;
 	private int posY = -1;
 
@@ -60,7 +60,7 @@ final class DataPanel extends JPanel {
 		repaint();
 	}
 
-	void setPosition(BallPosition pos) {
+	public void setPosition(BallPosition pos) {
 		posX = (int) (pos.x * getWidth());
 		posY = (int) (pos.y * getHeight());
 		repaint();

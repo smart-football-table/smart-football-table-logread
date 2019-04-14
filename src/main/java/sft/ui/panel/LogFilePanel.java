@@ -1,4 +1,4 @@
-package sft.ui;
+package sft.ui.panel;
 
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.EAST;
@@ -26,7 +26,7 @@ import javax.swing.Timer;
 import sft.event.Event;
 import sft.reader.log.LogReader;
 
-class LogFilePanel extends JPanel {
+public class LogFilePanel extends JPanel {
 
 	private static final long serialVersionUID = -1088486354322072946L;
 
