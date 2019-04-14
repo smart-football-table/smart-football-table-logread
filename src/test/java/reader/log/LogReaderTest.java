@@ -1,8 +1,8 @@
 package reader.log;
 
 import static java.util.stream.Collectors.joining;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -10,17 +10,17 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import sft.event.BallPosition;
 import sft.event.Event;
 import sft.event.TeamScored;
 import sft.reader.log.LogReader;
 
-class LogReaderTest {
+public class LogReaderTest {
 
 	@Test
-	void canParse() throws IOException, ParseException {
+	public void canParse() throws IOException, ParseException {
 		List<String> lines = new ArrayList<>();
 
 		int team = 1;

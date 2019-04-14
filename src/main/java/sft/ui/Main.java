@@ -47,12 +47,12 @@ public class Main {
 		layeredPane.add(dataPanel, -1);
 		layeredPane.add(backgroundPanel, -1);
 		frame.add(layeredPane, NORTH);
-		LogFilePanel logFilePanel = new LogFilePanel(event -> {
-			if (event instanceof BallPosition) {
-				dataPanel.setPosition((BallPosition) event);
+		LogFilePanel logFilePanel = new LogFilePanel(e -> {
+			if (e instanceof BallPosition) {
+				dataPanel.setPosition((BallPosition) e);
 			}
-			if (event instanceof TeamScored) {
-				dataPanel.setScore((TeamScored) event);
+			if (e instanceof TeamScored) {
+				dataPanel.setScore((TeamScored) e);
 			}
 		});
 
