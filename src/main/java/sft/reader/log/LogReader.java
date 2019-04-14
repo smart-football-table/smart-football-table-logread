@@ -1,4 +1,4 @@
-package reader.log;
+package sft.reader.log;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import event.Event;
-import event.BallPosition;
-import event.TeamScored;
+import sft.event.BallPosition;
+import sft.event.Event;
+import sft.event.TeamScored;
 
 public class LogReader {
 

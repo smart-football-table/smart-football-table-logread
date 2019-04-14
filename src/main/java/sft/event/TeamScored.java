@@ -1,4 +1,4 @@
-package event;
+package sft.event;
 
 public class TeamScored extends Event {
 

@@ -12,9 +12,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import event.BallPosition;
-import event.Event;
-import event.TeamScored;
+import sft.event.BallPosition;
+import sft.event.Event;
+import sft.event.TeamScored;
+import sft.reader.log.LogReader;
 
 class LogReaderTest {
 
