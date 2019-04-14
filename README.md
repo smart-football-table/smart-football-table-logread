@@ -1,1 +1,1 @@
-# smart-football-table.logread
+# smart-football-table-logread
