@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -39,8 +40,8 @@ import javax.swing.JSlider;
 import javax.swing.OverlayLayout;
 import javax.swing.Timer;
 
-import event.Event;
 import event.BallPosition;
+import event.Event;
 import event.TeamScored;
 import reader.log.LogReader;
 
@@ -50,7 +51,7 @@ public class Main {
 
 		private static final long serialVersionUID = -1088486354322072946L;
 
-		private final DataPanel dataPanel;
+		private final Consumer<Event> eventConsumer;
 
 		private final static String playText = ">";
 		private final static String pauseText = "||";
@@ -84,8 +85,8 @@ public class Main {
 			slider.setMaximum(events.size() - 1);
 		}
 
-		public LogFilePanel(DataPanel dataPanel) throws FileNotFoundException, IOException, ParseException {
-			this.dataPanel = dataPanel;
+		public LogFilePanel(Consumer<Event> eventConsumer) throws FileNotFoundException, IOException, ParseException {
+			this.eventConsumer = eventConsumer;
 			setLayout(new BorderLayout());
 			add(playButton, WEST);
 			add(slider, CENTER);
@@ -141,21 +142,12 @@ public class Main {
 				if (running) {
 					timer.stop();
 				}
-				sendEvent(events.get(slider.getValue()));
+				eventConsumer.accept(events.get(slider.getValue()));
 				if (running) {
 					timerPlay();
 				}
 			});
 			return slider;
-		}
-
-		private void sendEvent(Event event) {
-			if (event instanceof BallPosition) {
-				dataPanel.setPosition((BallPosition) event);
-			}
-			if (event instanceof TeamScored) {
-				dataPanel.setScore((TeamScored) event);
-			}
 		}
 
 	}
@@ -258,7 +250,14 @@ public class Main {
 		layeredPane.add(dataPanel, -1);
 		layeredPane.add(backgroundPanel, -1);
 		frame.add(layeredPane, NORTH);
-		LogFilePanel logFilePanel = new LogFilePanel(dataPanel);
+		LogFilePanel logFilePanel = new LogFilePanel(event -> {
+			if (event instanceof BallPosition) {
+				dataPanel.setPosition((BallPosition) event);
+			}
+			if (event instanceof TeamScored) {
+				dataPanel.setScore((TeamScored) event);
+			}
+		});
 
 		frame.add(logFilePanel, SOUTH);
 		invokeLater(() -> {
