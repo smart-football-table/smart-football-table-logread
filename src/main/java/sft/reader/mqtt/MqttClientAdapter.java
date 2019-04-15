@@ -1,4 +1,4 @@
-package reader.log;
+package sft.reader.mqtt;
 
 import static java.lang.System.nanoTime;
 import static sft.reader.log.parser.LogEntryParsers.tryParse;
