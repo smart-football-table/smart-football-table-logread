@@ -3,6 +3,8 @@ package reader.log;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.rules.Timeout.seconds;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.spy;
 import static reader.junit.rules.Message.mqttMessage;
 import static reader.junit.rules.MqttRule.withLocalhostAndRandomPort;
 
@@ -15,6 +17,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import reader.junit.rules.Message;
 import reader.junit.rules.MqttRule;
@@ -35,13 +39,7 @@ public class MqttReplayTest {
 
 	@Before
 	public void setup() throws MqttSecurityException, MqttException {
-		sut = new MqttReplay(mqttRule.broker().host(), mqttRule.broker().port()) {
-			@Override
-			protected void sleepNanos(long nanos) {
-				// TODO assert sleep time
-//				super.sleepNanos(nanos);
-			}
-		};
+		sut = spy(new MqttReplay(mqttRule.broker().host(), mqttRule.broker().port()));
 	}
 
 	@After
@@ -54,8 +52,15 @@ public class MqttReplayTest {
 		BallPosition bp = new BallPosition(0.2, 0.3);
 		TeamScored ts = new TeamScored(5, 6);
 		int baseNanos = 123;
-		sut.replay(asList(timestamped(baseNanos, bp), timestamped(baseNanos + SECONDS.toNanos(5), ts)));
+		long sleepNanos = baseNanos + SECONDS.toNanos(5);
+		sut.replay(asList(timestamped(baseNanos, bp), timestamped(sleepNanos, ts)));
+		
 		mqttRule.client().assertReceived(message(bp), message(ts));
+		InOrder orderVerifier = inOrder(sut);
+		orderVerifier.verify(sut).publish(message(bp).getTopic(), message(bp).getPayload());
+		// TODO any -> sleepNanos
+		orderVerifier.verify(sut).sleepNanos(Mockito.any(Long.class));
+		orderVerifier.verify(sut).publish(message(ts).getTopic(), message(ts).getPayload());
 	}
 
 	private Message message(TeamScored teamScored) {

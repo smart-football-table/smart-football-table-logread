@@ -36,17 +36,13 @@ public class MqttReplay implements Closeable {
 
 			if (event instanceof BallPosition) {
 				BallPosition position = (BallPosition) event;
-				publish(client, "ball/position", "{\"x\": " + position.x + ", \"y\": " + position.y + "}");
+				publish("ball/position", "{\"x\": " + position.x + ", \"y\": " + position.y + "}");
 			} else if (event instanceof TeamScored) {
 				TeamScored teamScored = (TeamScored) event;
-				publish(client, "game/score/team/" + teamScored.team, String.valueOf(teamScored.score));
+				publish("game/score/team/" + teamScored.team, String.valueOf(teamScored.score));
 			}
 			prev = timestampedEvent;
 		}
-	}
-
-	protected void sleepNanos(long nanos) throws InterruptedException {
-		TimeUnit.NANOSECONDS.sleep(nanos);
 	}
 
 	private MqttClient newMqttClient(final String host, final int port, final String id)
@@ -62,9 +58,12 @@ public class MqttReplay implements Closeable {
 		return mqttConnectOptions;
 	}
 
-	private void publish(MqttClient client, String topic, String payload)
-			throws MqttException, MqttPersistenceException {
-		client.publish(topic, payload.getBytes(), 0, false);
+	protected void publish(String topic, String payload) throws MqttException, MqttPersistenceException {
+		this.client.publish(topic, payload.getBytes(), 0, false);
+	}
+
+	protected void sleepNanos(long nanos) throws InterruptedException {
+		TimeUnit.NANOSECONDS.sleep(nanos);
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package reader.junit.rules;
 
+import static java.lang.Long.MAX_VALUE;
+import static java.util.concurrent.TimeUnit.DAYS;
+import static java.util.stream.IntStream.range;
 import static reader.junit.rules.Message.mqttMessage;
 
 import java.io.Closeable;
@@ -73,5 +76,21 @@ public abstract class Client implements Closeable {
 	}
 
 	public abstract void assertReceived(Message... messages);
+
+	protected Message[] poll(BlockingQueue<Message> queue, int size) {
+		return range(0, size).mapToObj(i -> poll(queue)).toArray(Message[]::new);
+	}
+
+	private Message poll(BlockingQueue<Message> queue) {
+		try {
+			Message poll;
+			do {
+				poll = queue.poll(MAX_VALUE, DAYS);
+			} while (poll == null);
+			return poll;
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }
