@@ -1,5 +1,7 @@
 package reader.junit.rules;
 
+import static reader.junit.rules.Message.mqttMessage;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -34,6 +36,10 @@ public abstract class Client implements Closeable {
 		return mqttConnectOptions;
 	}
 
+	public void publish(Message message) {
+		publish(message.getTopic(), message.getPayload());
+	}
+
 	public void publish(String topic, String payload) {
 		try {
 			client.publish(topic, payload.getBytes(), 0, false);
@@ -44,7 +50,7 @@ public abstract class Client implements Closeable {
 
 	private void subsribe(String topic, Consumer<Message> consumer) {
 		try {
-			client.subscribe(topic, (t, m) -> consumer.accept(new Message(t, new String(m.getPayload()))));
+			client.subscribe(topic, (t, m) -> consumer.accept(mqttMessage(t, new String(m.getPayload()))));
 		} catch (MqttException e) {
 			throw new RuntimeException(e);
 		}

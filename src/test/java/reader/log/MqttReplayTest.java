@@ -2,6 +2,7 @@ package reader.log;
 
 import static java.util.Arrays.asList;
 import static org.junit.rules.Timeout.seconds;
+import static reader.junit.rules.Message.mqttMessage;
 import static reader.junit.rules.MqttRule.withLocalhostAndRandomPort;
 
 import java.util.List;
@@ -34,8 +35,8 @@ public class MqttReplayTest {
 	@Test
 	public void canReplayLog() throws MqttSecurityException, MqttException, InterruptedException {
 		replay(asList(new BallPosition(1, 0.2, 0.3), new TeamScored(4, 5, 6)));
-		mqttRule.client().assertReceived(new Message("ball/position", "{\"x\": 0.2, \"y\": 0.3}"),
-				new Message("game/score/team/5", "6"));
+		mqttRule.client().assertReceived(mqttMessage("ball/position", "{\"x\": 0.2, \"y\": 0.3}"),
+				mqttMessage("game/score/team/5", "6"));
 	}
 
 	private void replay(List<Event> events) throws MqttSecurityException, MqttException {

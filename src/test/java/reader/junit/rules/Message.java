@@ -5,9 +5,13 @@ public class Message {
 	private final String topic;
 	private final String payload;
 
-	public Message(String topic, String payload) {
+	private Message(String topic, String payload) {
 		this.topic = topic;
 		this.payload = payload;
+	}
+
+	public static Message mqttMessage(String topic, String payload) {
+		return new Message(topic, payload);
 	}
 
 	@Override
