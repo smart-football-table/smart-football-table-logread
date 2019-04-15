@@ -13,8 +13,8 @@ import java.util.List;
 import org.junit.Test;
 
 import sft.event.BallPosition;
-import sft.event.Event;
 import sft.event.TeamScored;
+import sft.event.TimestampedEvent;
 import sft.reader.log.LogReader;
 
 public class LogReaderTest {
@@ -32,18 +32,18 @@ public class LogReaderTest {
 		lines.add(makeBallPosition("14:13:00.817681", x, y));
 
 		StringReader stringReader = new StringReader(lines.stream().collect(joining("\n")));
-		List<Event> events = LogReader.read(stringReader);
+		List<TimestampedEvent> events = LogReader.read(stringReader);
 		assertThat(events.size(), is(score));
 
-		TeamScored event1 = (TeamScored) events.get(0);
-		assertThat(event1.nanos, is(51180590269000L));
-		assertThat(event1.team, is(team));
-		assertThat(event1.score, is(score));
+		TeamScored event0 = (TeamScored) events.get(0).getEvent();
+		assertThat(events.get(0).nanos, is(51180590269000L));
+		assertThat(event0.team, is(team));
+		assertThat(event0.score, is(score));
 
-		BallPosition event2 = (BallPosition) events.get(team);
-		assertThat(event2.nanos, is(51180817681000L));
-		assertThat(event2.x, is(x));
-		assertThat(event2.y, is(y));
+		BallPosition event1 = (BallPosition) events.get(1).getEvent();
+		assertThat(events.get(1).nanos, is(51180817681000L));
+		assertThat(event1.x, is(x));
+		assertThat(event1.y, is(y));
 	}
 
 	private static String makeGameScoreTeam(String timestamp, int team, int score) {

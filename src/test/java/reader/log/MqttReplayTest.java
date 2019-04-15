@@ -1,28 +1,27 @@
 package reader.log;
 
 import static java.util.Arrays.asList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.rules.Timeout.seconds;
 import static reader.junit.rules.Message.mqttMessage;
 import static reader.junit.rules.MqttRule.withLocalhostAndRandomPort;
 
-import java.util.List;
+import java.io.IOException;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 
-import reader.junit.rules.Broker;
 import reader.junit.rules.Message;
 import reader.junit.rules.MqttRule;
 import sft.event.BallPosition;
 import sft.event.Event;
 import sft.event.TeamScored;
+import sft.event.TimestampedEvent;
 
 public class MqttReplayTest {
 
@@ -32,44 +31,43 @@ public class MqttReplayTest {
 	@Rule
 	public MqttRule mqttRule = withLocalhostAndRandomPort();
 
+	private MqttReplay sut;
+
+	@Before
+	public void setup() throws MqttSecurityException, MqttException {
+		sut = new MqttReplay(mqttRule.broker().host(), mqttRule.broker().port()) {
+			@Override
+			protected void sleepNanos(long nanos) {
+				// TODO assert sleep time
+//				super.sleepNanos(nanos);
+			}
+		};
+	}
+
+	@After
+	public void tearDown() throws IOException {
+		sut.close();
+	}
+
 	@Test
 	public void canReplayLog() throws MqttSecurityException, MqttException, InterruptedException {
-		replay(asList(new BallPosition(1, 0.2, 0.3), new TeamScored(4, 5, 6)));
-		mqttRule.client().assertReceived(mqttMessage("ball/position", "{\"x\": 0.2, \"y\": 0.3}"),
-				mqttMessage("game/score/team/5", "6"));
+		BallPosition bp = new BallPosition(0.2, 0.3);
+		TeamScored ts = new TeamScored(5, 6);
+		int baseNanos = 123;
+		sut.replay(asList(timestamped(baseNanos, bp), timestamped(baseNanos + SECONDS.toNanos(5), ts)));
+		mqttRule.client().assertReceived(message(bp), message(ts));
 	}
 
-	private void replay(List<Event> events) throws MqttSecurityException, MqttException {
-		Broker broker = mqttRule.broker();
-		MqttClient client = newMqttClient(broker.host(), broker.port(), "logreplay-" + System.currentTimeMillis());
-		for (Event event : events) {
-			// TODO check timestamps and sleep
-			if (event instanceof BallPosition) {
-				BallPosition position = (BallPosition) event;
-				publish(client, "ball/position", "{\"x\": " + position.x + ", \"y\": " + position.y + "}");
-			} else if (event instanceof TeamScored) {
-				TeamScored teamScored = (TeamScored) event;
-				publish(client, "game/score/team/" + teamScored.team, String.valueOf(teamScored.score));
-			}
-		}
+	private Message message(TeamScored teamScored) {
+		return mqttMessage("game/score/team/" + teamScored.team, String.valueOf(teamScored.score));
 	}
 
-	private void publish(MqttClient client, String topic, String payload)
-			throws MqttException, MqttPersistenceException {
-		client.publish(topic, payload.getBytes(), 0, false);
+	private Message message(BallPosition position) {
+		return mqttMessage("ball/position", "{\"x\": " + position.x + ", \"y\": " + position.y + "}");
 	}
 
-	private MqttClient newMqttClient(final String host, final int port, final String id)
-			throws MqttException, MqttSecurityException {
-		final MqttClient client = new MqttClient("tcp://" + host + ":" + port, id, new MemoryPersistence());
-		client.connect(mqttConnectOptions());
-		return client;
-	}
-
-	private MqttConnectOptions mqttConnectOptions() {
-		final MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
-		mqttConnectOptions.setAutomaticReconnect(true);
-		return mqttConnectOptions;
+	private static TimestampedEvent timestamped(long nanos, Event event) {
+		return new TimestampedEvent(nanos, event);
 	}
 
 }

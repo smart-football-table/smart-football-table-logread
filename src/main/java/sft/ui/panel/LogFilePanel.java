@@ -24,6 +24,7 @@ import javax.swing.JSlider;
 import javax.swing.Timer;
 
 import sft.event.Event;
+import sft.event.TimestampedEvent;
 import sft.reader.log.LogReader;
 
 public class LogFilePanel extends JPanel {
@@ -38,7 +39,7 @@ public class LogFilePanel extends JPanel {
 	private final JSlider slider = makeSlider();
 	private final JButton playButton = makePlayButton();
 
-	private List<Event> events = emptyList();
+	private List<TimestampedEvent> events = emptyList();
 
 	private long start;
 	private long nanosOfFirstEvent;
@@ -49,7 +50,7 @@ public class LogFilePanel extends JPanel {
 			((Timer) e.getSource()).stop();
 			playButton.setText(playText);
 		} else {
-			Event event = events.get(next);
+			TimestampedEvent event = events.get(next);
 			long diffOfFile = event.nanos - nanosOfFirstEvent;
 			long nowRunning = System.nanoTime() - start;
 			if (nowRunning >= diffOfFile) {
@@ -58,7 +59,7 @@ public class LogFilePanel extends JPanel {
 		}
 	});
 
-	private void setEvents(List<Event> events) {
+	private void setEvents(List<TimestampedEvent> events) {
 		this.events = events;
 		slider.setValue(0);
 		slider.setMaximum(events.size() - 1);

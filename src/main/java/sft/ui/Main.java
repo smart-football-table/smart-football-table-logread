@@ -11,19 +11,25 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.OverlayLayout;
 
 import sft.event.BallPosition;
+import sft.event.Event;
 import sft.event.TeamScored;
 import sft.ui.panel.BackgroundPanel;
 import sft.ui.panel.DataPanel;
 import sft.ui.panel.LogFilePanel;
+import sft.ui.panel.MqttClientPanel;
 
 public class Main {
+
+	private boolean mqtt = true;
 
 	public static void main(String[] args) throws IOException, InterruptedException, ParseException {
 		new Main().doMain();
@@ -47,16 +53,9 @@ public class Main {
 		layeredPane.add(dataPanel, -1);
 		layeredPane.add(backgroundPanel, -1);
 		frame.add(layeredPane, NORTH);
-		LogFilePanel logFilePanel = new LogFilePanel(e -> {
-			if (e instanceof BallPosition) {
-				dataPanel.setPosition((BallPosition) e);
-			}
-			if (e instanceof TeamScored) {
-				dataPanel.setScore((TeamScored) e);
-			}
-		});
-
-		frame.add(logFilePanel, SOUTH);
+		JComponent panel = mqtt ? new MqttClientPanel(consumeToPanel(dataPanel))
+				: new LogFilePanel(consumeToPanel(dataPanel));
+		frame.add(panel, SOUTH);
 		invokeLater(() -> {
 			try {
 				frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -69,6 +68,17 @@ public class Main {
 			}
 		});
 
+	}
+
+	private Consumer<Event> consumeToPanel(DataPanel dataPanel) {
+		return e -> {
+			if (e instanceof BallPosition) {
+				dataPanel.setPosition((BallPosition) e);
+			}
+			if (e instanceof TeamScored) {
+				dataPanel.setScore((TeamScored) e);
+			}
+		};
 	}
 
 }

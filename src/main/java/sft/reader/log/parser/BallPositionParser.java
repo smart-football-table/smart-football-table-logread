@@ -20,13 +20,13 @@ public class BallPositionParser implements LogEntryParser {
 	}
 
 	@Override
-	public Event parse(long nanos, String topic, String message) {
+	public Event parse(String topic, String message) {
 		Matcher xMatcher = xPattern.matcher(message);
 		Matcher yMatcher = yPattern.matcher(message);
 		if (!xMatcher.find() || !yMatcher.find()) {
 			throw new IllegalStateException("Cannot parse " + message + " as position");
 		}
-		return new BallPosition(nanos, parseDouble(xMatcher.group(1)), parseDouble(yMatcher.group(1)));
+		return new BallPosition(parseDouble(xMatcher.group(1)), parseDouble(yMatcher.group(1)));
 	}
 
 	private static Pattern doubleValueFromJsonPattern(String var) {

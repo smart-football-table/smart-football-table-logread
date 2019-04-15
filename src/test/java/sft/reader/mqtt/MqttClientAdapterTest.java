@@ -30,26 +30,28 @@ public class MqttClientAdapterTest {
 	@Test
 	public void doesSubsribeAndReceive() throws Exception {
 		List<Event> events = new ArrayList<>();
-		new MqttClientAdapter(mqttRule.broker().host(), mqttRule.broker().port(), events::add);
+		try (MqttClientAdapter mqttClientAdapter = new MqttClientAdapter(mqttRule.broker().host(),
+				mqttRule.broker().port(), events::add)) {
+			double x = 0.12345;
+			double y = 0.6789;
+			int team = 1;
+			int score = 2;
+			mqttRule.client().publish(mqttMessage("ball/position", "{\"x\":" + x + ",\"y\":" + y + "}"));
+			mqttRule.client().publish(mqttMessage("game/score/team/" + team, String.valueOf(score)));
 
-		double x = 0.12345;
-		double y = 0.6789;
-		int team = 1;
-		int score = 2;
-		mqttRule.client().publish(mqttMessage("ball/position", "{\"x\":" + x + ",\"y\":" + y + "}"));
-		mqttRule.client().publish(mqttMessage("game/score/team/" + team, String.valueOf(score)));
+			while (events.size() != 2) {
+				TimeUnit.MILLISECONDS.sleep(10);
+			}
 
-		TimeUnit.MILLISECONDS.sleep(100);
+			BallPosition ballPosition = (BallPosition) events.get(0);
+			assertThat(ballPosition.x, is(x));
+			assertThat(ballPosition.y, is(y));
 
-		assertThat(events.size(), is(2));
+			TeamScored teamScored = (TeamScored) events.get(1);
+			assertThat(teamScored.team, is(team));
+			assertThat(teamScored.score, is(score));
+		}
 
-		BallPosition ballPosition = (BallPosition) events.get(0);
-		assertThat(ballPosition.x, is(x));
-		assertThat(ballPosition.y, is(y));
-
-		TeamScored teamScored = (TeamScored) events.get(1);
-		assertThat(teamScored.team, is(team));
-		assertThat(teamScored.score, is(score));
 	}
 
 }

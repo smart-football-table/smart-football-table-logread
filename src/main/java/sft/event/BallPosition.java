@@ -1,13 +1,13 @@
 package sft.event;
 
-public class BallPosition extends Event {
+public class BallPosition implements Event {
 
 	public final double x;
 	public final double y;
 
-	public BallPosition(long nanos, double x, double y) {
-		super(nanos);
+	public BallPosition(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
+
 }

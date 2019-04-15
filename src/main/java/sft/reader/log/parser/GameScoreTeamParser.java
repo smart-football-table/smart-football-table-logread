@@ -13,10 +13,10 @@ public class GameScoreTeamParser implements LogEntryParser {
 	}
 
 	@Override
-	public Event parse(long nanos, String topic, String message) {
+	public Event parse(String topic, String message) {
 		int team = parseInt(topic.substring("game/score/team/".length()));
 		int score = parseInt(message);
-		return new TeamScored(nanos, team, score);
+		return new TeamScored(team, score);
 	}
 
 }

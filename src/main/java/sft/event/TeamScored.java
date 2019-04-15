@@ -1,12 +1,11 @@
 package sft.event;
 
-public class TeamScored extends Event {
+public class TeamScored implements Event {
 
 	public final int team;
 	public final int score;
 
-	public TeamScored(long nanos, int team, int score) {
-		super(nanos);
+	public TeamScored(int team, int score) {
 		this.team = team;
 		this.score = score;
 	}

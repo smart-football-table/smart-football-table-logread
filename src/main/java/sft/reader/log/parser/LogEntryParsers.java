@@ -15,8 +15,8 @@ public final class LogEntryParsers {
 		super();
 	}
 
-	public static Optional<Event> tryParse(long nanos, String topic, String message) {
-		return parsers.stream().filter(p -> p.canParse(topic)).findFirst().map(p -> p.parse(nanos, topic, message));
+	public static Optional<Event> tryParse(String topic, String message) {
+		return parsers.stream().filter(p -> p.canParse(topic)).findFirst().map(p -> p.parse(topic, message));
 	}
 
 }
