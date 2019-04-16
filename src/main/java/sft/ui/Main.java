@@ -22,6 +22,7 @@ import javax.swing.OverlayLayout;
 import sft.event.BallPosition;
 import sft.event.Event;
 import sft.event.TeamScored;
+import sft.event.TimestampedEvent;
 import sft.ui.panel.BackgroundPanel;
 import sft.ui.panel.DataPanel;
 import sft.ui.panel.LogFilePanel;
@@ -29,14 +30,15 @@ import sft.ui.panel.MqttClientPanel;
 
 public class Main {
 
-	private boolean mqtt = true;
+	private boolean mqtt = false;
 
 	public static void main(String[] args) throws IOException, InterruptedException, ParseException {
 		new Main().doMain();
 	}
 
 	private void doMain() throws IOException, ParseException {
-		String backgroundImage = "football-field-1428839_1280.png";
+		String backgroundImage = "kicker.png";
+//		String backgroundImage = "football-field-1428839_1280.png";
 //		String backgroundImage = "image008.gif";
 		BufferedImage img = ImageIO.read(new File(backgroundImage));
 		BackgroundPanel backgroundPanel = new BackgroundPanel(img);
@@ -72,6 +74,10 @@ public class Main {
 
 	private Consumer<Event> consumeToPanel(DataPanel dataPanel) {
 		return e -> {
+			// TODO code smell
+			if (e instanceof TimestampedEvent) {
+				e = ((TimestampedEvent) e).getEvent();
+			}
 			if (e instanceof BallPosition) {
 				dataPanel.setPosition((BallPosition) e);
 			}
