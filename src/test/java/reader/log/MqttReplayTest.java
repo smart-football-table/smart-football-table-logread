@@ -54,12 +54,13 @@ public class MqttReplayTest {
 		int baseNanos = 123;
 		long sleepNanos = baseNanos + SECONDS.toNanos(5);
 		sut.replay(asList(timestamped(baseNanos, bp), timestamped(sleepNanos, ts)));
-		
+
 		mqttRule.client().assertReceived(message(bp), message(ts));
 		InOrder orderVerifier = inOrder(sut);
 		orderVerifier.verify(sut).publish(message(bp).getTopic(), message(bp).getPayload());
 		// TODO any -> sleepNanos
-		orderVerifier.verify(sut).sleepNanos(Mockito.any(Long.class));
+//		orderVerifier.verify(sut).sleepNanos(sleepNanos);
+		orderVerifier.verify(sut).sleepNanos(Mockito.any(long.class));
 		orderVerifier.verify(sut).publish(message(ts).getTopic(), message(ts).getPayload());
 	}
 
