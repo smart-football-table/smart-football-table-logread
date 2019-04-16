@@ -39,7 +39,7 @@ public class LogFilePanel extends JPanel {
 	private final JSlider slider = makeSlider();
 	private final JButton playButton = makePlayButton();
 
-	private List<TimestampedEvent> events = emptyList();
+	private List<TimestampedEvent> timestampedEvents = emptyList();
 
 	private long start;
 	private long nanosOfFirstEvent;
@@ -50,8 +50,8 @@ public class LogFilePanel extends JPanel {
 			((Timer) e.getSource()).stop();
 			playButton.setText(playText);
 		} else {
-			TimestampedEvent event = events.get(next);
-			long diffOfFile = event.nanos - nanosOfFirstEvent;
+			TimestampedEvent timestampedEvent = timestampedEvents.get(next);
+			long diffOfFile = timestampedEvent.nanos - nanosOfFirstEvent;
 			long nowRunning = System.nanoTime() - start;
 			if (nowRunning >= diffOfFile) {
 				slider.setValue(next);
@@ -59,10 +59,10 @@ public class LogFilePanel extends JPanel {
 		}
 	});
 
-	private void setEvents(List<TimestampedEvent> events) {
-		this.events = events;
+	private void setEvents(List<TimestampedEvent> timestampedEvents) {
+		this.timestampedEvents = timestampedEvents;
 		slider.setValue(0);
-		slider.setMaximum(events.size() - 1);
+		slider.setMaximum(timestampedEvents.size() - 1);
 	}
 
 	public LogFilePanel(Consumer<Event> eventConsumer) throws FileNotFoundException, IOException, ParseException {
@@ -105,7 +105,7 @@ public class LogFilePanel extends JPanel {
 	private void timerPlay() {
 		playButton.setText(pauseText);
 		start = System.nanoTime();
-		nanosOfFirstEvent = events.isEmpty() ? 0 : events.get(slider.getValue()).nanos;
+		nanosOfFirstEvent = timestampedEvents.isEmpty() ? 0 : timestampedEvents.get(slider.getValue()).nanos;
 		timer.start();
 	}
 
@@ -122,7 +122,7 @@ public class LogFilePanel extends JPanel {
 			if (running) {
 				timer.stop();
 			}
-			eventConsumer.accept(events.get(slider.getValue()));
+			eventConsumer.accept(timestampedEvents.get(slider.getValue()).getEvent());
 			if (running) {
 				timerPlay();
 			}

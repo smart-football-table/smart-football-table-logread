@@ -74,10 +74,6 @@ public class Main {
 
 	private Consumer<Event> consumeToPanel(DataPanel dataPanel) {
 		return e -> {
-			// TODO code smell
-			if (e instanceof TimestampedEvent) {
-				e = ((TimestampedEvent) e).getEvent();
-			}
 			if (e instanceof BallPosition) {
 				dataPanel.setPosition((BallPosition) e);
 			}

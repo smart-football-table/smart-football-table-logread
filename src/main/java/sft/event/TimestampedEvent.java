@@ -1,6 +1,6 @@
 package sft.event;
 
-public class TimestampedEvent implements Event {
+public class TimestampedEvent {
 
 	public static final TimestampedEvent NULL = new TimestampedEvent(-1, null);
 
@@ -12,7 +12,7 @@ public class TimestampedEvent implements Event {
 		this.nanos = nanos;
 		this.event = event;
 	}
-	
+
 	public Event getEvent() {
 		return event;
 	}
