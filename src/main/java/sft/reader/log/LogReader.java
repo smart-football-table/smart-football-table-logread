@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,8 +23,6 @@ import sft.event.EventInTime;
 import sft.reader.log.parser.LogEntryParsers;
 
 public class LogReader {
-
-	private static final EventInTime NULL_EVENT = EventInTime.NULL;
 
 	private static final int nanoDigitsUsed = 6;
 	private static final int nanoMultiplier = (int) pow(10,
@@ -36,11 +35,12 @@ public class LogReader {
 
 	public static List<EventInTime> read(Reader reader) throws IOException {
 		try (BufferedReader br = new BufferedReader(reader)) {
-			return br.lines().map(LogReader::makeEvent).filter(e -> e != NULL_EVENT).collect(toList());
+			return br.lines().map(LogReader::makeEvent).filter(Optional::isPresent).map(Optional::get)
+					.collect(toList());
 		}
 	}
 
-	private static EventInTime makeEvent(String line) {
+	private static Optional<EventInTime> makeEvent(String line) {
 		String[] split = line.trim().split("\\s");
 
 		Matcher timestampMatcher = timestampPattern.matcher(split[0].trim());
@@ -50,7 +50,7 @@ public class LogReader {
 		long nanos = nanos(timestampMatcher);
 		String topic = split[1].trim();
 		String message = split[2].trim();
-		return LogEntryParsers.tryParse(topic, message).map(e -> new EventInTime(nanos, e)).orElse(NULL_EVENT);
+		return LogEntryParsers.tryParse(topic, message).map(e -> new EventInTime(nanos, e));
 	}
 
 	private static long nanos(Matcher timestampMatcher) {
@@ -59,4 +59,5 @@ public class LogReader {
 				+ SECONDS.toNanos(parseInt(timestampMatcher.group(3))) //
 				+ parseInt(timestampMatcher.group(4)) * nanoMultiplier;
 	}
+
 }

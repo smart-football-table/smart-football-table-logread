@@ -22,7 +22,6 @@ import javax.swing.OverlayLayout;
 import sft.event.BallPosition;
 import sft.event.Event;
 import sft.event.TeamScored;
-import sft.event.EventInTime;
 import sft.ui.panel.BackgroundPanel;
 import sft.ui.panel.DataPanel;
 import sft.ui.panel.LogFilePanel;
@@ -55,9 +54,8 @@ public class Main {
 		layeredPane.add(dataPanel, -1);
 		layeredPane.add(backgroundPanel, -1);
 		frame.add(layeredPane, NORTH);
-		JComponent panel = mqtt ? new MqttClientPanel(consumeToPanel(dataPanel))
-				: new LogFilePanel(consumeToPanel(dataPanel));
-		frame.add(panel, SOUTH);
+		Consumer<Event> consumeToPanel = consumeToPanel(dataPanel);
+		frame.add(mqtt ? new MqttClientPanel(consumeToPanel) : new LogFilePanel(consumeToPanel), SOUTH);
 		invokeLater(() -> {
 			try {
 				frame.setDefaultCloseOperation(EXIT_ON_CLOSE);

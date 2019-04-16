@@ -2,8 +2,6 @@ package sft.event;
 
 public class EventInTime {
 
-	public static final EventInTime NULL = new EventInTime(-1, null);
-
 	public final long nanos;
 
 	private final Event event;
