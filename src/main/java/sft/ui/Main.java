@@ -14,7 +14,6 @@ import java.text.ParseException;
 import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.OverlayLayout;
@@ -40,10 +39,11 @@ public class Main {
 //		String backgroundImage = "football-field-1428839_1280.png";
 //		String backgroundImage = "image008.gif";
 		BufferedImage img = ImageIO.read(new File(backgroundImage));
+		BufferedImage ball = ImageIO.read(new File("ball.png"));
 		BackgroundPanel backgroundPanel = new BackgroundPanel(img);
 		backgroundPanel.setOpaque(false);
 
-		DataPanel dataPanel = new DataPanel(img.getWidth() / 32, YELLOW);
+		DataPanel dataPanel = new DataPanel(ball);
 		dataPanel.setOpaque(false);
 
 		JFrame frame = new JFrame("SFT Viewer");

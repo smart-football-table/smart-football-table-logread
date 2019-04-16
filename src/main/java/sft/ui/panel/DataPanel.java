@@ -3,9 +3,9 @@ package sft.ui.panel;
 import static java.awt.Color.BLACK;
 import static java.awt.Font.PLAIN;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,17 +18,15 @@ public final class DataPanel extends JPanel {
 
 	private static final long serialVersionUID = 5889168701206425622L;
 
-	private final int ballSize;
-	private final Color ballColor;
+	private final BufferedImage ball;
 	private final Font font = new Font("TimesRoman", PLAIN, 60);
 
 	private final Map<Integer, Integer> scores = new HashMap<>();
 	private int posX = -1;
 	private int posY = -1;
 
-	public DataPanel(int ballSize, Color ballColor) {
-		this.ballSize = ballSize;
-		this.ballColor = ballColor;
+	public DataPanel(BufferedImage ball) {
+		this.ball = ball;
 	}
 
 	@Override
@@ -40,8 +38,7 @@ public final class DataPanel extends JPanel {
 
 	private void paintBall(Graphics g) {
 		if (posX >= 0 && posY >= 0) {
-			g.setColor(ballColor);
-			g.fillOval(posX - ballSize / 2, posY - ballSize / 2, ballSize, ballSize);
+			g.drawImage(ball, (int) posX, (int) posY, null);
 		}
 	}
 
