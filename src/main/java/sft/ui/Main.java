@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.function.Consumer;
 
@@ -35,11 +36,10 @@ public class Main {
 	}
 
 	private void doMain() throws IOException, ParseException {
+		String ballImage = "ball.png";
 		String backgroundImage = "kicker.png";
-//		String backgroundImage = "football-field-1428839_1280.png";
-//		String backgroundImage = "image008.gif";
-		BufferedImage img = ImageIO.read(new File(backgroundImage));
-		BufferedImage ball = ImageIO.read(new File("ball.png"));
+		BufferedImage img = ImageIO.read(Main.class.getResource(backgroundImage));
+		BufferedImage ball = ImageIO.read(Main.class.getResource(ballImage));
 		BackgroundPanel backgroundPanel = new BackgroundPanel(img);
 		backgroundPanel.setOpaque(false);
 
