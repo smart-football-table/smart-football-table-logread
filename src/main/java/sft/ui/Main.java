@@ -22,7 +22,7 @@ import javax.swing.OverlayLayout;
 import sft.event.BallPosition;
 import sft.event.Event;
 import sft.event.TeamScored;
-import sft.event.TimestampedEvent;
+import sft.event.EventInTime;
 import sft.ui.panel.BackgroundPanel;
 import sft.ui.panel.DataPanel;
 import sft.ui.panel.LogFilePanel;

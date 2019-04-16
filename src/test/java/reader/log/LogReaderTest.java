@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import sft.event.BallPosition;
 import sft.event.TeamScored;
-import sft.event.TimestampedEvent;
+import sft.event.EventInTime;
 import sft.reader.log.LogReader;
 
 public class LogReaderTest {
@@ -32,7 +32,7 @@ public class LogReaderTest {
 		lines.add(makeBallPosition("14:13:00.817681", x, y));
 
 		StringReader stringReader = new StringReader(lines.stream().collect(joining("\n")));
-		List<TimestampedEvent> events = LogReader.read(stringReader);
+		List<EventInTime> events = LogReader.read(stringReader);
 		assertThat(events.size(), is(score));
 
 		TeamScored event0 = (TeamScored) events.get(0).getEvent();

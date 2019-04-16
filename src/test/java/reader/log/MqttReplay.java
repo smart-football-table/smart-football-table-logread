@@ -14,8 +14,8 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import sft.event.BallPosition;
 import sft.event.Event;
+import sft.event.EventInTime;
 import sft.event.TeamScored;
-import sft.event.TimestampedEvent;
 
 public class MqttReplay implements Closeable {
 
@@ -25,13 +25,13 @@ public class MqttReplay implements Closeable {
 		this.client = newMqttClient(host, port, "logreplay-" + System.currentTimeMillis());
 	}
 
-	public void replay(List<TimestampedEvent> events)
+	public void replay(List<EventInTime> eventsInTime)
 			throws MqttSecurityException, MqttException, InterruptedException {
-		TimestampedEvent prev = null;
-		for (TimestampedEvent timestampedEvent : events) {
-			Event event = timestampedEvent.getEvent();
+		EventInTime prev = null;
+		for (EventInTime eventInTime : eventsInTime) {
+			Event event = eventInTime.getEvent();
 			if (prev != null) {
-				sleepNanos(timestampedEvent.nanos - prev.nanos);
+				sleepNanos(eventInTime.nanos - prev.nanos);
 			}
 
 			if (event instanceof BallPosition) {
@@ -41,7 +41,7 @@ public class MqttReplay implements Closeable {
 				TeamScored teamScored = (TeamScored) event;
 				publish("game/score/team/" + teamScored.team, String.valueOf(teamScored.score));
 			}
-			prev = timestampedEvent;
+			prev = eventInTime;
 		}
 	}
 

@@ -24,7 +24,7 @@ import javax.swing.JSlider;
 import javax.swing.Timer;
 
 import sft.event.Event;
-import sft.event.TimestampedEvent;
+import sft.event.EventInTime;
 import sft.reader.log.LogReader;
 
 public class LogFilePanel extends JPanel {
@@ -39,7 +39,7 @@ public class LogFilePanel extends JPanel {
 	private final JSlider slider = makeSlider();
 	private final JButton playButton = makePlayButton();
 
-	private List<TimestampedEvent> timestampedEvents = emptyList();
+	private List<EventInTime> eventsInTime = emptyList();
 
 	private long start;
 	private long nanosOfFirstEvent;
@@ -50,8 +50,8 @@ public class LogFilePanel extends JPanel {
 			((Timer) e.getSource()).stop();
 			playButton.setText(playText);
 		} else {
-			TimestampedEvent timestampedEvent = timestampedEvents.get(next);
-			long diffOfFile = timestampedEvent.nanos - nanosOfFirstEvent;
+			EventInTime eventInTime = eventsInTime.get(next);
+			long diffOfFile = eventInTime.nanos - nanosOfFirstEvent;
 			long nowRunning = System.nanoTime() - start;
 			if (nowRunning >= diffOfFile) {
 				slider.setValue(next);
@@ -59,10 +59,10 @@ public class LogFilePanel extends JPanel {
 		}
 	});
 
-	private void setEvents(List<TimestampedEvent> timestampedEvents) {
-		this.timestampedEvents = timestampedEvents;
+	private void setEvents(List<EventInTime> eventsInTime) {
+		this.eventsInTime = eventsInTime;
 		slider.setValue(0);
-		slider.setMaximum(timestampedEvents.size() - 1);
+		slider.setMaximum(eventsInTime.size() - 1);
 	}
 
 	public LogFilePanel(Consumer<Event> eventConsumer) throws FileNotFoundException, IOException, ParseException {
@@ -105,7 +105,7 @@ public class LogFilePanel extends JPanel {
 	private void timerPlay() {
 		playButton.setText(pauseText);
 		start = System.nanoTime();
-		nanosOfFirstEvent = timestampedEvents.isEmpty() ? 0 : timestampedEvents.get(slider.getValue()).nanos;
+		nanosOfFirstEvent = eventsInTime.isEmpty() ? 0 : eventsInTime.get(slider.getValue()).nanos;
 		timer.start();
 	}
 
@@ -122,7 +122,7 @@ public class LogFilePanel extends JPanel {
 			if (running) {
 				timer.stop();
 			}
-			eventConsumer.accept(timestampedEvents.get(slider.getValue()).getEvent());
+			eventConsumer.accept(eventsInTime.get(slider.getValue()).getEvent());
 			if (running) {
 				timerPlay();
 			}

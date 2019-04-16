@@ -25,7 +25,7 @@ import reader.junit.rules.MqttRule;
 import sft.event.BallPosition;
 import sft.event.Event;
 import sft.event.TeamScored;
-import sft.event.TimestampedEvent;
+import sft.event.EventInTime;
 
 public class MqttReplayTest {
 
@@ -53,7 +53,7 @@ public class MqttReplayTest {
 		TeamScored ts = new TeamScored(5, 6);
 		int baseNanos = 123;
 		long sleepNanos = baseNanos + SECONDS.toNanos(5);
-		sut.replay(asList(timestamped(baseNanos, bp), timestamped(sleepNanos, ts)));
+		sut.replay(asList(inTime(baseNanos, bp), inTime(sleepNanos, ts)));
 
 		mqttRule.client().assertReceived(message(bp), message(ts));
 		InOrder orderVerifier = inOrder(sut);
@@ -72,8 +72,8 @@ public class MqttReplayTest {
 		return mqttMessage("ball/position", "{\"x\": " + position.x + ", \"y\": " + position.y + "}");
 	}
 
-	private static TimestampedEvent timestamped(long nanos, Event event) {
-		return new TimestampedEvent(nanos, event);
+	private static EventInTime inTime(long nanos, Event event) {
+		return new EventInTime(nanos, event);
 	}
 
 }
