@@ -7,13 +7,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.ParseException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
 import sft.event.BallPosition;
-import sft.event.TeamScored;
+import sft.event.TeamScore;
 import sft.event.EventInTime;
 import sft.reader.log.LogReader;
 
@@ -25,7 +27,7 @@ public class LogReaderTest {
 
 		int team = 1;
 		int score = 2;
-		lines.add(makeGameScoreTeam("14:13:00.590269", team, score));
+		lines.add(makeTeamScore("14:13:00.590269", team, score));
 
 		double x = 0.7209876543209877;
 		double y = 0.20246913580246914;
@@ -33,9 +35,9 @@ public class LogReaderTest {
 
 		StringReader stringReader = new StringReader(lines.stream().collect(joining("\n")));
 		List<EventInTime> events = LogReader.read(stringReader);
-		assertThat(events.size(), is(score));
+		assertThat(events.size(), is(2));
 
-		TeamScored event0 = (TeamScored) events.get(0).getEvent();
+		TeamScore event0 = (TeamScore) events.get(0).getEvent();
 		assertThat(events.get(0).nanos, is(51180590269000L));
 		assertThat(event0.team, is(team));
 		assertThat(event0.score, is(score));
@@ -46,12 +48,16 @@ public class LogReaderTest {
 		assertThat(event1.y, is(y));
 	}
 
-	private static String makeGameScoreTeam(String timestamp, int team, int score) {
-		return timestamp + " " + "game/score/team/" + team + " " + score;
+	private static String makeTeamScore(String timestamp, int team, int score) {
+		return timestamp + " " + "team/score/" + team + " " + score;
 	}
 
 	private String makeBallPosition(String timestamp, double x, double y) {
-		return timestamp + " " + "ball/position {\"x\":" + x + ",\"y\":" + y + "}";
+		return timestamp + " " + "ball/position/abs " + millis(LocalTime.parse(timestamp)) + "," + x + "," + y;
+	}
+
+	private long millis(LocalTime localTime) {
+		return TimeUnit.NANOSECONDS.toMillis(localTime.toNanoOfDay());
 	}
 
 }

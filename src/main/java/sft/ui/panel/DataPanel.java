@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import sft.event.BallPosition;
-import sft.event.TeamScored;
+import sft.event.TeamScore;
 
 public final class DataPanel extends JPanel {
 
@@ -50,7 +50,7 @@ public final class DataPanel extends JPanel {
 		g.drawString(score, topX, 100);
 	}
 
-	public void setScore(TeamScored teamScored) {
+	public void setScore(TeamScore teamScored) {
 		scores.put(teamScored.team, teamScored.score);
 		posX = -1;
 		posY = -1;

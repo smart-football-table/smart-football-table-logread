@@ -2,15 +2,12 @@ package sft.ui;
 
 import static java.awt.BorderLayout.NORTH;
 import static java.awt.BorderLayout.SOUTH;
-import static java.awt.Color.YELLOW;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import static javax.swing.SwingUtilities.invokeLater;
 
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.function.Consumer;
 
@@ -21,7 +18,7 @@ import javax.swing.OverlayLayout;
 
 import sft.event.BallPosition;
 import sft.event.Event;
-import sft.event.TeamScored;
+import sft.event.TeamScore;
 import sft.ui.panel.BackgroundPanel;
 import sft.ui.panel.DataPanel;
 import sft.ui.panel.LogFilePanel;
@@ -75,8 +72,8 @@ public class Main {
 			if (e instanceof BallPosition) {
 				dataPanel.setPosition((BallPosition) e);
 			}
-			if (e instanceof TeamScored) {
-				dataPanel.setScore((TeamScored) e);
+			if (e instanceof TeamScore) {
+				dataPanel.setScore((TeamScore) e);
 			}
 		};
 	}

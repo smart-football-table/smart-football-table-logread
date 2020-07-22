@@ -15,7 +15,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import sft.event.BallPosition;
 import sft.event.Event;
 import sft.event.EventInTime;
-import sft.event.TeamScored;
+import sft.event.TeamScore;
 
 public class MqttReplay implements Closeable {
 
@@ -36,9 +36,9 @@ public class MqttReplay implements Closeable {
 
 			if (event instanceof BallPosition) {
 				BallPosition position = (BallPosition) event;
-				publish("ball/position", "{\"x\": " + position.x + ", \"y\": " + position.y + "}");
-			} else if (event instanceof TeamScored) {
-				TeamScored teamScored = (TeamScored) event;
+				publish("ball/position/abs", position.timestamp + "," + position.x + "," + position.y);
+			} else if (event instanceof TeamScore) {
+				TeamScore teamScored = (TeamScore) event;
 				publish("game/score/team/" + teamScored.team, String.valueOf(teamScored.score));
 			}
 			prev = eventInTime;

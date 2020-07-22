@@ -1,11 +1,11 @@
 package sft.event;
 
-public class TeamScored implements Event {
+public class TeamScore implements Event {
 
 	public final int team;
 	public final int score;
 
-	public TeamScored(int team, int score) {
+	public TeamScore(int team, int score) {
 		this.team = team;
 		this.score = score;
 	}

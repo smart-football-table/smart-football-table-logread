@@ -1,10 +1,13 @@
 package reader.junit.rules;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.rules.ExternalResource;
 
@@ -39,7 +42,9 @@ public class MqttRule extends ExternalResource {
 		this.client = new Client(broker) {
 			@Override
 			public void assertReceived(Message... expected) {
-				assertThat(poll(getMessages(), expected.length), is(expected));
+				await().untilAsserted(() -> {
+					assertThat(new ArrayList<>(getMessages()), is(Arrays.asList(expected)));
+				});
 			}
 		};
 		super.before();

@@ -24,7 +24,7 @@ import reader.junit.rules.Message;
 import reader.junit.rules.MqttRule;
 import sft.event.BallPosition;
 import sft.event.Event;
-import sft.event.TeamScored;
+import sft.event.TeamScore;
 import sft.event.EventInTime;
 
 public class MqttReplayTest {
@@ -49,27 +49,33 @@ public class MqttReplayTest {
 
 	@Test
 	public void canReplayLog() throws MqttSecurityException, MqttException, InterruptedException {
-		BallPosition bp = new BallPosition(0.2, 0.3);
-		TeamScored ts = new TeamScored(5, 6);
 		int baseNanos = 123;
+		BallPosition bp = new BallPosition(baseNanos, 0.2, 0.3);
+		TeamScore ts = new TeamScore(5, 6);
 		long sleepNanos = baseNanos + SECONDS.toNanos(5);
-		sut.replay(asList(inTime(baseNanos, bp), inTime(sleepNanos, ts)));
+		EventInTime m1 = inTime(baseNanos, bp);
+		EventInTime m2 = inTime(sleepNanos, ts);
+		sut.replay(asList(m1, m2));
 
-		mqttRule.client().assertReceived(message(bp), message(ts));
+		mqttRule.client().assertReceived(message(m1), message(m2));
 		InOrder orderVerifier = inOrder(sut);
-		orderVerifier.verify(sut).publish(message(bp).getTopic(), message(bp).getPayload());
+		orderVerifier.verify(sut).publish(message(m1).getTopic(), message(m1).getPayload());
 		// TODO any -> sleepNanos
 //		orderVerifier.verify(sut).sleepNanos(sleepNanos);
 		orderVerifier.verify(sut).sleepNanos(Mockito.any(long.class));
-		orderVerifier.verify(sut).publish(message(ts).getTopic(), message(ts).getPayload());
+		orderVerifier.verify(sut).publish(message(m2).getTopic(), message(m2).getPayload());
 	}
 
-	private Message message(TeamScored teamScored) {
-		return mqttMessage("game/score/team/" + teamScored.team, String.valueOf(teamScored.score));
-	}
-
-	private Message message(BallPosition position) {
-		return mqttMessage("ball/position", "{\"x\": " + position.x + ", \"y\": " + position.y + "}");
+	private Message message(EventInTime eventInTime) {
+		if (eventInTime.getEvent() instanceof BallPosition) {
+			BallPosition position = (BallPosition) eventInTime.getEvent();
+			return mqttMessage("ball/position/abs", eventInTime.nanos + "," + position.x + "," + position.y);
+		}
+		if (eventInTime.getEvent() instanceof TeamScore) {
+			TeamScore teamScore = (TeamScore) eventInTime.getEvent();
+			return mqttMessage("game/score/team/" + teamScore.team, String.valueOf(teamScore.score));
+		}
+		throw new IllegalStateException(String.valueOf(eventInTime));
 	}
 
 	private static EventInTime inTime(long nanos, Event event) {
