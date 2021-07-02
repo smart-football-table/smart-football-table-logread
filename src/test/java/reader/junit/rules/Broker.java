@@ -7,9 +7,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Properties;
 
-import io.moquette.server.Server;
-import io.moquette.server.config.IConfig;
-import io.moquette.server.config.MemoryConfig;
+import io.moquette.broker.Server;
+import io.moquette.broker.config.IConfig;
+import io.moquette.broker.config.MemoryConfig;
 
 public class Broker implements Closeable {
 
