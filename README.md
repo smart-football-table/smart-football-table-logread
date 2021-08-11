@@ -1,6 +1,6 @@
 # smart-football-table-logread
 
-[![Build Status](https://travis-ci.org/smart-football-table/smart-football-table-logread.svg?branch=master)](https://travis-ci.org/smart-football-table/smart-football-table-logread)
+[![Build Status](https://travis-ci.com/smart-football-table/smart-football-table-logread.svg?branch=master)](https://travis-ci.com/smart-football-table/smart-football-table-logread)
 [![BCH compliance](https://bettercodehub.com/edge/badge/smart-football-table/smart-football-table-logread?branch=master)](https://bettercodehub.com/)
 [![codecov](https://codecov.io/gh/smart-football-table/smart-football-table-logread/branch/master/graph/badge.svg)](https://codecov.io/gh/smart-football-table/smart-football-table-logread)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c59e78943b41b5f3329a/maintainability)](https://codeclimate.com/github/smart-football-table/smart-football-table-logread/maintainability)
