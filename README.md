@@ -9,5 +9,7 @@
 [![GitLicense](https://gitlicense.com/badge/smart-football-table/smart-football-table-ledcontrol)](https://gitlicense.com/license/smart-football-table/smart-football-table-ledcontrol)
 
 How to generate logs
-~~mosquitto_sub -v -t '#' | xargs -d$'\n' -L1 sh -c 'date "+%T.%6N $0"' 2>&1 | tee sft-mqtt.log~~
+
 mosquitto_sub -v -t '#' -F "%U %t %p" > tee sft-mqtt.log
+
+~~mosquitto_sub -v -t '#' | xargs -d$'\n' -L1 sh -c 'date "+%T.%6N $0"' 2>&1 | tee sft-mqtt.log~~
