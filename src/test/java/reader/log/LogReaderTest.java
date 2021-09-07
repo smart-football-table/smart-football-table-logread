@@ -1,8 +1,10 @@
 package reader.log;
 
 import static java.util.stream.Collectors.joining;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -15,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 import sft.event.BallPosition;
-import sft.event.TeamScore;
 import sft.event.EventInTime;
+import sft.event.TeamScore;
 import sft.reader.log.LogReader;
 
 public class LogReaderTest {
@@ -46,6 +48,15 @@ public class LogReaderTest {
 		assertThat(events.get(1).nanos, is(51180817681000L));
 		assertThat(event1.x, is(x));
 		assertThat(event1.y, is(y));
+	}
+
+	@Test
+	public void throwsExceptionOnInvalidLines() throws IOException, ParseException {
+		String line = "XXX-INVALID-LINE-XXX";
+		String message = assertThrows(RuntimeException.class, () -> LogReader.read(new StringReader(line + "\n")))
+				.getMessage();
+		assertThat(message, containsString("Cannot parse"));
+		assertThat(message, containsString(line));
 	}
 
 	private static String makeTeamScore(String timestamp, int team, int score) {
