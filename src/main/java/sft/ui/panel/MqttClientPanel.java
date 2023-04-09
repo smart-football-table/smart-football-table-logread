@@ -26,7 +26,7 @@ public class MqttClientPanel extends JPanel {
 
 	private boolean connected;
 
-	private MqttClientAdapter mqttClientAdapter;
+	private transient MqttClientAdapter mqttClientAdapter;
 
 	public MqttClientPanel(Consumer<Event> consumer) {
 		setLayout(new BorderLayout());

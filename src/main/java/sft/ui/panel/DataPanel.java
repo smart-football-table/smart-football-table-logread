@@ -18,8 +18,8 @@ public final class DataPanel extends JPanel {
 
 	private static final long serialVersionUID = 5889168701206425622L;
 
-	private final BufferedImage ball;
-	private final Font font = new Font("TimesRoman", PLAIN, 60);
+	private final transient BufferedImage ball;
+	private final Font timesRomanBig = new Font("TimesRoman", PLAIN, 60);
 
 	private final Map<Integer, Integer> scores = new HashMap<>();
 	private int posX = -1;
@@ -38,12 +38,12 @@ public final class DataPanel extends JPanel {
 
 	private void paintBall(Graphics g) {
 		if (posX >= 0 && posY >= 0) {
-			g.drawImage(ball, (int) posX, (int) posY, null);
+			g.drawImage(ball, posX, posY, null);
 		}
 	}
 
 	private void paintScore(Graphics g) {
-		g.setFont(font);
+		g.setFont(timesRomanBig);
 		String score = scores.getOrDefault(0, 0) + ":" + scores.getOrDefault(1, 0);
 		int topX = (getWidth() - g.getFontMetrics().stringWidth(score)) / 2;
 		g.setColor(BLACK);

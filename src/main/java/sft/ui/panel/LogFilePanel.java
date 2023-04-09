@@ -31,22 +31,22 @@ public class LogFilePanel extends JPanel {
 
 	private static final long serialVersionUID = -1088486354322072946L;
 
-	private final Consumer<Event> eventConsumer;
+	private final transient Consumer<Event> eventConsumer;
 
-	private final static String playText = ">";
-	private final static String pauseText = "||";
+	private static final String playText = ">";
+	private static final String pauseText = "||";
 
-	private final JSlider slider = makeSlider();
+	private final JSlider timeSlider = makeSlider();
 	private final JButton playButton = makePlayButton();
 
-	private List<EventInTime> eventsInTime = emptyList();
+	private transient List<EventInTime> eventsInTime = emptyList();
 
 	private long start;
 	private long nanosOfFirstEvent;
 
 	private Timer timer = new Timer(1, e -> {
-		int next = slider.getValue() + 1;
-		if (next >= slider.getMaximum()) {
+		int next = timeSlider.getValue() + 1;
+		if (next >= timeSlider.getMaximum()) {
 			((Timer) e.getSource()).stop();
 			playButton.setText(playText);
 		} else {
@@ -54,22 +54,22 @@ public class LogFilePanel extends JPanel {
 			long diffOfFile = eventInTime.nanos - nanosOfFirstEvent;
 			long nowRunning = System.nanoTime() - start;
 			if (nowRunning >= diffOfFile) {
-				slider.setValue(next);
+				timeSlider.setValue(next);
 			}
 		}
 	});
 
 	private void setEvents(List<EventInTime> eventsInTime) {
 		this.eventsInTime = eventsInTime;
-		slider.setValue(0);
-		slider.setMaximum(eventsInTime.size() - 1);
+		timeSlider.setValue(0);
+		timeSlider.setMaximum(eventsInTime.size() - 1);
 	}
 
 	public LogFilePanel(Consumer<Event> eventConsumer) throws FileNotFoundException, IOException, ParseException {
 		this.eventConsumer = eventConsumer;
 		setLayout(new BorderLayout());
 		add(playButton, WEST);
-		add(slider, CENTER);
+		add(timeSlider, CENTER);
 		add(makeFileOpen(), EAST);
 	}
 
@@ -90,22 +90,22 @@ public class LogFilePanel extends JPanel {
 	}
 
 	private JButton makePlayButton() {
-		JButton playButton = new JButton(playText);
-		playButton.addActionListener(e -> {
+		JButton button = new JButton(playText);
+		button.addActionListener(e -> {
 			if (timer.isRunning()) {
 				timer.stop();
-				playButton.setText(playText);
+				button.setText(playText);
 			} else {
 				timerPlay();
 			}
 		});
-		return playButton;
+		return button;
 	}
 
 	private void timerPlay() {
 		playButton.setText(pauseText);
 		start = System.nanoTime();
-		nanosOfFirstEvent = eventsInTime.isEmpty() ? 0 : eventsInTime.get(slider.getValue()).nanos;
+		nanosOfFirstEvent = eventsInTime.isEmpty() ? 0 : eventsInTime.get(timeSlider.getValue()).nanos;
 		timer.start();
 	}
 

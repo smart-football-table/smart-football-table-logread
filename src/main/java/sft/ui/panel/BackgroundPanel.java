@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 public final class BackgroundPanel extends JPanel {
 
-	private final BufferedImage img;
+	private final transient BufferedImage img;
 	private static final long serialVersionUID = 5889168701206425622L;
 
 	public BackgroundPanel(BufferedImage img) throws HeadlessException {

@@ -23,11 +23,15 @@ import sft.event.EventInTime;
 import sft.reader.log.parser.LogEntryParsers;
 
 public class LogReader {
-
+	
 	private static final int nanoDigitsUsed = 6;
 	private static final int nanoMultiplier = (int) pow(10,
 			String.valueOf(SECONDS.toNanos(1) - 1).length() - nanoDigitsUsed);
 	private static final Pattern timestampPattern = compile("(\\d{2}):(\\d{2}):(\\d{2}).(\\d{" + nanoDigitsUsed + "})");
+
+	private LogReader() {
+		super();
+	}
 
 	public static List<EventInTime> read(InputStream is) throws IOException, ParseException {
 		return read(new InputStreamReader(is));

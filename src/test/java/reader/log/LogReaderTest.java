@@ -53,7 +53,8 @@ public class LogReaderTest {
 	@Test
 	public void throwsExceptionOnInvalidLines() throws IOException, ParseException {
 		String line = "XXX-INVALID-LINE-XXX";
-		String message = assertThrows(RuntimeException.class, () -> LogReader.read(new StringReader(line + "\n")))
+		StringReader reader = new StringReader(line + "\n");
+		String message = assertThrows(RuntimeException.class, () -> LogReader.read(reader))
 				.getMessage();
 		assertThat(message, containsString("Cannot parse"));
 		assertThat(message, containsString(line));

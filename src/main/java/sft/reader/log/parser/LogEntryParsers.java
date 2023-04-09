@@ -1,6 +1,7 @@
 package sft.reader.log.parser;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +10,8 @@ import sft.event.Event;
 
 public final class LogEntryParsers {
 
-	public static final List<LogEntryParser> parsers = asList(new BallPositionParser(), new TeamScoreParser());
+	private static final List<LogEntryParser> parsers = unmodifiableList(
+			asList(new BallPositionParser(), new TeamScoreParser()));
 
 	private LogEntryParsers() {
 		super();
