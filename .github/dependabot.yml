@@ -17,3 +17,8 @@ updates:
   open-pull-requests-limit: 10
   assignees:
   - pfichtner
+  ignore:
+    - dependency-name: "org.junit:junit-bom"
+      versions: [">=6.0.0"]
+    - dependency-name: "rg.mockito:mockito-core"
+      versions: [">=5.0.0"]
