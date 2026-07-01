@@ -33,7 +33,7 @@ public class LogReader {
 		super();
 	}
 
-	public static List<EventInTime> read(InputStream is) throws IOException, ParseException {
+	public static List<EventInTime> read(InputStream is) throws IOException {
 		return read(new InputStreamReader(is));
 	}
 
@@ -61,7 +61,7 @@ public class LogReader {
 		return HOURS.toNanos(parseInt(timestampMatcher.group(1))) //
 				+ MINUTES.toNanos(parseInt(timestampMatcher.group(2))) //
 				+ SECONDS.toNanos(parseInt(timestampMatcher.group(3))) //
-				+ parseInt(timestampMatcher.group(4)) * nanoMultiplier;
+				+ (long) parseInt(timestampMatcher.group(4)) * nanoMultiplier;
 	}
 
 }

@@ -19,12 +19,12 @@ public abstract class Client implements Closeable {
 	private final BlockingQueue<Message> messages = new LinkedBlockingQueue<>();
 	private final MqttClient client;
 
-	public Client(Broker broker) throws MqttSecurityException, MqttException {
+	public Client(Broker broker) throws MqttException {
 		client = newMqttClient(broker.host(), broker.port(), "randomClientId-" + System.currentTimeMillis());
 		subsribe("#", messages::offer);
 	}
 
-	private MqttClient newMqttClient(String host, int port, String id) throws MqttException, MqttSecurityException {
+	private MqttClient newMqttClient(String host, int port, String id) throws MqttException {
 		MqttClient client = new MqttClient("tcp://" + host + ":" + port, id, new MemoryPersistence());
 		client.connect(mqttConnectOptions());
 		return client;

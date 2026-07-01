@@ -10,8 +10,7 @@ import sft.event.Event;
 
 public final class LogEntryParsers {
 
-	private static final List<LogEntryParser> parsers = unmodifiableList(
-			asList(new BallPositionParser(), new TeamScoreParser()));
+	private static final List<LogEntryParser> parsers = List.of(new BallPositionParser(), new TeamScoreParser());
 
 	private LogEntryParsers() {
 		super();

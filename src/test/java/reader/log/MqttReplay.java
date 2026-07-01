@@ -21,12 +21,12 @@ public class MqttReplay implements Closeable {
 
 	private final MqttClient client;
 
-	public MqttReplay(String host, int port) throws MqttSecurityException, MqttException {
+	public MqttReplay(String host, int port) throws MqttException {
 		this.client = newMqttClient(host, port, "logreplay-" + System.currentTimeMillis());
 	}
 
 	public void replay(List<EventInTime> eventsInTime)
-			throws MqttSecurityException, MqttException, InterruptedException {
+			throws MqttException, InterruptedException {
 		EventInTime prev = null;
 		for (EventInTime eventInTime : eventsInTime) {
 			Event event = eventInTime.getEvent();
@@ -46,7 +46,7 @@ public class MqttReplay implements Closeable {
 	}
 
 	private MqttClient newMqttClient(final String host, final int port, final String id)
-			throws MqttException, MqttSecurityException {
+			throws MqttException {
 		MqttClient client = new MqttClient("tcp://" + host + ":" + port, id, new MemoryPersistence());
 		client.connect(mqttConnectOptions());
 		return client;
@@ -58,7 +58,7 @@ public class MqttReplay implements Closeable {
 		return mqttConnectOptions;
 	}
 
-	protected void publish(String topic, String payload) throws MqttException, MqttPersistenceException {
+	protected void publish(String topic, String payload) throws MqttException {
 		this.client.publish(topic, payload.getBytes(), 0, false);
 	}
 

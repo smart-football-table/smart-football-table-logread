@@ -44,7 +44,7 @@ public class LogFilePanel extends JPanel {
 	private long start;
 	private long nanosOfFirstEvent;
 
-	private Timer timer = new Timer(1, e -> {
+	private final Timer timer = new Timer(1, e -> {
 		int next = timeSlider.getValue() + 1;
 		if (next >= timeSlider.getMaximum()) {
 			((Timer) e.getSource()).stop();
@@ -65,7 +65,7 @@ public class LogFilePanel extends JPanel {
 		timeSlider.setMaximum(eventsInTime.size() - 1);
 	}
 
-	public LogFilePanel(Consumer<Event> eventConsumer) throws FileNotFoundException, IOException, ParseException {
+	public LogFilePanel(Consumer<Event> eventConsumer) {
 		this.eventConsumer = eventConsumer;
 		setLayout(new BorderLayout());
 		add(playButton, WEST);
@@ -81,7 +81,7 @@ public class LogFilePanel extends JPanel {
 				File file = fileChooser.getSelectedFile();
 				try {
 					setEvents(LogReader.read(new FileInputStream(file)));
-				} catch (IOException | ParseException e1) {
+				} catch (IOException e1) {
 					showMessageDialog(this, e1.getMessage(), "Error", ERROR_MESSAGE);
 				}
 			}

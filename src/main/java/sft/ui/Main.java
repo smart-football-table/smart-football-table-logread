@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
@@ -28,15 +29,15 @@ public class Main {
 
 	private boolean mqtt = false;
 
-	public static void main(String[] args) throws IOException, InterruptedException, ParseException {
+	public static void main(String[] args) throws IOException {
 		new Main().doMain();
 	}
 
-	private void doMain() throws IOException, ParseException {
+	private void doMain() throws IOException {
 		String ballImage = "ball.png";
 		String backgroundImage = "kicker.png";
-		BufferedImage img = ImageIO.read(Main.class.getResource(backgroundImage));
-		BufferedImage ball = ImageIO.read(Main.class.getResource(ballImage));
+		BufferedImage img = ImageIO.read(Objects.requireNonNull(Main.class.getResource(backgroundImage)));
+		BufferedImage ball = ImageIO.read(Objects.requireNonNull(Main.class.getResource(ballImage)));
 		BackgroundPanel backgroundPanel = new BackgroundPanel(img);
 		backgroundPanel.setOpaque(false);
 

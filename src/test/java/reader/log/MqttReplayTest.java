@@ -38,7 +38,7 @@ public class MqttReplayTest {
 	private MqttReplay sut;
 
 	@Before
-	public void setup() throws MqttSecurityException, MqttException {
+	public void setup() throws MqttException {
 		sut = spy(new MqttReplay(mqttRule.broker().host(), mqttRule.broker().port()));
 	}
 
@@ -48,7 +48,7 @@ public class MqttReplayTest {
 	}
 
 	@Test
-	public void canReplayLog() throws MqttSecurityException, MqttException, InterruptedException {
+	public void canReplayLog() throws MqttException, InterruptedException {
 		int baseNanos = 123;
 		BallPosition bp = new BallPosition(baseNanos, 0.2, 0.3);
 		TeamScore ts = new TeamScore(5, 6);

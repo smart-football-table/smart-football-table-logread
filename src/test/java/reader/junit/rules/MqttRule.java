@@ -42,9 +42,7 @@ public class MqttRule extends ExternalResource {
 		this.client = new Client(broker) {
 			@Override
 			public void assertReceived(Message... expected) {
-				await().untilAsserted(() -> {
-					assertThat(new ArrayList<>(getMessages()), is(Arrays.asList(expected)));
-				});
+				await().untilAsserted(() -> assertThat(new ArrayList<>(getMessages()), is(Arrays.asList(expected))));
 			}
 		};
 		super.before();

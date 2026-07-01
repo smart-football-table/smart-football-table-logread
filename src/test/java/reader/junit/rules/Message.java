@@ -29,12 +29,9 @@ public class Message {
 		} else if (!payload.equals(other.payload))
 			return false;
 		if (topic == null) {
-			if (other.topic != null)
-				return false;
-		} else if (!topic.equals(other.topic))
-			return false;
-		return true;
-	}
+            return other.topic == null;
+		} else return topic.equals(other.topic);
+    }
 
 	public String getPayload() {
 		return payload;

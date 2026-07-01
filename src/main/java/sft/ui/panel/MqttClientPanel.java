@@ -21,8 +21,8 @@ public class MqttClientPanel extends JPanel {
 
 	private static final int MQTT_DEFAULT_PORT = 1883;
 
-	private JTextField hostPort;
-	private JButton connect;
+	private final JTextField hostPort;
+	private final JButton connect;
 
 	private boolean connected;
 

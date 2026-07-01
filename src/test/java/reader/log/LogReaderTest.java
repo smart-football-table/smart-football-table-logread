@@ -24,7 +24,7 @@ import sft.reader.log.LogReader;
 public class LogReaderTest {
 
 	@Test
-	public void canParse() throws IOException, ParseException {
+	public void canParse() throws IOException {
 		List<String> lines = new ArrayList<>();
 
 		int team = 1;
@@ -35,7 +35,7 @@ public class LogReaderTest {
 		double y = 0.20246913580246914;
 		lines.add(makeBallPosition("14:13:00.817681", x, y));
 
-		StringReader stringReader = new StringReader(lines.stream().collect(joining("\n")));
+		StringReader stringReader = new StringReader(String.join("\n", lines));
 		List<EventInTime> events = LogReader.read(stringReader);
 		assertThat(events.size(), is(2));
 
@@ -51,7 +51,7 @@ public class LogReaderTest {
 	}
 
 	@Test
-	public void throwsExceptionOnInvalidLines() throws IOException, ParseException {
+	public void throwsExceptionOnInvalidLines()  {
 		String line = "XXX-INVALID-LINE-XXX";
 		StringReader reader = new StringReader(line + "\n");
 		String message = assertThrows(RuntimeException.class, () -> LogReader.read(reader))
